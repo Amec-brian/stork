@@ -1,0 +1,52 @@
+#include "TrexApp.h"
+#include "Moose.h"
+#include "AppFactory.h"
+#include "MooseSyntax.h"
+
+template<>
+InputParameters validParams<TrexApp>()
+{
+  InputParameters params = validParams<MooseApp>();
+
+  params.set<bool>("use_legacy_uo_initialization") = false;
+  params.set<bool>("use_legacy_uo_aux_computation") = false;
+  params.set<bool>("use_legacy_output_syntax") = false;
+
+  return params;
+}
+
+TrexApp::TrexApp(InputParameters parameters) :
+    MooseApp(parameters)
+{
+  Moose::registerObjects(_factory);
+  TrexApp::registerObjects(_factory);
+
+  Moose::associateSyntax(_syntax, _action_factory);
+  TrexApp::associateSyntax(_syntax, _action_factory);
+}
+
+TrexApp::~TrexApp()
+{
+}
+
+// External entry point for dynamic application loading
+extern "C" void TrexApp__registerApps() { TrexApp::registerApps(); }
+void
+TrexApp::registerApps()
+{
+  registerApp(TrexApp);
+}
+
+// External entry point for dynamic object registration
+extern "C" void TrexApp__registerObjects(Factory & factory) { TrexApp::registerObjects(factory); }
+void
+TrexApp::registerObjects(Factory & factory)
+{
+}
+
+// External entry point for dynamic syntax association
+extern "C" void TrexApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory) { TrexApp::associateSyntax(syntax, action_factory); }
+void
+TrexApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
+{
+}
